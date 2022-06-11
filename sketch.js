@@ -108,17 +108,17 @@ function draw() {
 destroy the blue balloon when hit 
 by the arrows */
 
-//  if (arrowGroup.isTouching(blueB)) {
-//   blueB.destroyEach();
-//   arrowGroup.destroyEach();
-//   score=score+2;
-// }
+  if (arrowGroup.isTouching(blueB)) {
+   blueB.destroyEach();
+   arrowGroup.destroyEach();
+   score=score+2;
+ }
 
 
-//  if (arrowGroup.isTouching(redB)) {
-//   blueB.destroyEach();
-//   arrowGroup.destroyEach();
-// }
+  if (arrowGroup.isTouching(redB)) {
+  redB.destroyEach();
+   arrowGroup.destroyEach();
+ }
 
 
 //  if (arrowGroup.isTouching(blueB)) {
