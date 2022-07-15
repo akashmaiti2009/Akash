@@ -1,83 +1,84 @@
-
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 
-let engine;
-let world;
-var angle=60;
+var ball, groundObj, leftSide, rightSide;
+var world;
+var dustbinImg, paperImg;
+var radius = 70;
 
-var ground;
-var b1,b2,b3,b4;
-var top_wall;
-var ball,rock;
+function preload() {
+	//find the bug in the below code
+	dustbinImg = loadImage("dustbin.png");
 
-var btn1;
-var btn2;
+
+	paperImg = loadImage("paper.png");
+
+
+	//keyPressed(UP_ARROW)
+	//fill(225)
+
+}
+
+
 function setup() {
-  createCanvas(400,400);
+	createCanvas(1600, 700);
+	rectMode(CENTER);
 
-  engine = Engine.create();
-  world = engine.world;
-  
-   
-  var ground_options ={
-    isStatic: true
-  };
- 
-  var ball_options = {
-    restitution: 0.95,
-    frictionAir:0.01
+	engine = Engine.create();
+	world = engine.world;
 
-  }
 
-  var rock_options = {
-    restitution: 0,
-    frictionAir:0.001
-  }
-   
-  btn2 = createImg('up.png');
-  btn2.position(350,30);
-  btn2.size(50,50);
-  btn2.mouseClicked(vForce);
-  
-  ball = Bodies.circle(100,10,20,ball_options);
-  World.add(world,ball);
-  
-  rock = Bodies.circle(250,10,20,rock_options);
-  World.add(world,rock);
+	var ball_options = {
+		isStatic: false,
+		restitution: 0.3,
+		density: 0.4
+	}
 
-  ground= Bodies.rectangle(200,390,400,20,ground_options);
+	ball = Bodies.circle(260, 100, radius / 2.6, ball_options);
+	World.add(world, ball);
 
-  World.add(world, ground);
- 
-  
+	ground = new Ground(width / 2, 670, width, 20);
+	leftSide = new Ground(1100, 600, 10, 120);
+	rightSide = new Ground(1270, 600, 10, 120);
+	bottomSide = new Ground(1185, 650, 150, 20);
 
-  rectMode(CENTER);
-  ellipseMode(RADIUS);
+	Engine.run(engine);
+
+
+
+
+
+
 }
 
 
-function draw() 
-{
-  background(51);
-  Engine.update(engine);
-  
-rect(ground.position.x,ground.position.y,400,20);
-ellipse(ball.position.x,ball.position.y,20);
-push();
-fill("brown");
-ellipse(rock.position.x,rock.position.y,20);
-pop();
+function draw() {
+	background(200);
+	rectMode(CENTER);
+
+
+	ground.display();
+	leftSide.display();
+	rightSide.display();
+	bottomSide.display();
+
+
+	//imageMode(CENTER);
+	//use image() command to add paper image to the ball
+	image(paperImg, ball.position.x, ball.position.y, radius, radius);
+
+	// use image() command to add dustbin image in the canvas.
+	image(dustbinImg, 1089, 470, 200, 200);
+
+
 }
 
-function vForce()
-{
- Matter.Body.applyForce(ball,{x:0,y:0},{x:0,y:-0.05});
+function keyPressed() {
+	if (keyCode === UP_ARROW) {
+
+		Matter.Body.applyForce(ball, ball.position, { x: 85, y: -85 });
+
+	}
 }
-
-
-  
-
-
