@@ -3,51 +3,70 @@ const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
+const Render = Matter.Render;
+const Constraint = Matter.Constraint;
+var bob1,bob2,bob3, bob4,bob5, roofObject
+var rope1,rope2,rope3, rope4,rope5;
+var world;
 
-let engine;
-let world;
-var ball;
-var ground;
-var wedge;
-var angle=60;
-var poly;
-var boxes=[];
+
 
 function setup() {
-  createCanvas(400,400);
+	createCanvas(800, 600);
+	rectMode(CENTER);
 
-  engine = Engine.create();
-  world = engine.world;
-  var option={
-    isStatic:true
-  };
-  ground=Bodies.rectangle(100,300,400,20,option);
-  World.add(world,ground);
-  //box1 = new Box(200,100,50,50);
+
+	engine = Engine.create();
+	world = engine.world;
+
+
+
+	roofObject=new roof(400,250,230,20);
+	bob1 = new bob(320,575,40)
+	bob2 = new bob(360,575,40)
+	bob3 = new bob(400,575,40)
+	bob4 = new bob(440,575,40)
+	bob5 = new bob(480,575,40)
+	
+	rope1=new rope(bob1.body,roofObject.body,-80)
+	rope2=new rope(bob2.body,roofObject.body,-40)
+	rope3=new rope(bob3.body,roofObject.body,0)
+	rope4=new rope(bob4.body,roofObject.body,40)
+	rope5=new rope(bob5.body,roofObject.body,80)
+    
+   
+	Engine.run(engine);
+	
   
+}
 
+function draw() {
   rectMode(CENTER);
-  ellipseMode(RADIUS);
-}
-function mousePressed(){
-  boxes.push(
-    
-    
-    new Box(mouseX,mouseY,50,50)
-    
-    
-    
-    )
+  background(230);
+  roofObject.display();
+
+  rope1.display();
+  rope2.display();
+  rope3.display();
+  rope4.display();
+  rope5.display();
+
+  bob1.display();
+  bob2.display();
+  
+  bob3.display();
+  bob4.display();
+  bob5.display();
+
+  
 }
 
-function draw() 
-{
-  background(51);
-  rect(ground.position.x,ground.position.y,400,10);
-  Engine.update(engine);
- for(var i=0;i<boxes.length;i++) {
- boxes[i].show();}
-  
-  
+
+function keyPressed() {
+	if (keyCode === UP_ARROW) {
+    //WRITE A CORRECT CODE TO APPLY A KEYPRESSED TO CHANGE THE POSITION OF BALL OBJECT TO THE LEFT WHEN UP ARROW KEY IS PRESSED
+     Matter.Body.applyForce(bob1.body,bob1.body.position,{x:-50,y:-45});
+	}
 }
+
 
