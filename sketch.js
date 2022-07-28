@@ -1,72 +1,63 @@
-
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-const Body = Matter.Body;
-const Render = Matter.Render;
 const Constraint = Matter.Constraint;
-var bob1,bob2,bob3, bob4,bob5, roofObject
-var rope1,rope2,rope3, rope4,rope5;
-var world;
 
+var engine, world;
+var canvas;
+var palyer, playerBase;
+var computer, computerBase;
 
 
 function setup() {
-	createCanvas(800, 600);
-	rectMode(CENTER);
+  canvas = createCanvas(windowWidth, windowHeight);
 
+  engine = Engine.create();
+  world = engine.world;
 
-	engine = Engine.create();
-	world = engine.world;
+  playerBase = new PlayerBase(300, random(450, height - 300), 180, 150);
+//create a player object from the Player class.
+   player = new Player(
+      280 ,
+      playerBase.body.position.y - 153,
+      50,
+      180
+   )
 
+  computerBase = new ComputerBase(
+    width - 300,
+    random(450, height - 300),
+    180,
+    150
+  );
+  computer = new Computer(
+    width - 280,
+    computerBase.body.position.y - 153,
+    50,
+    180
+  );
 
-
-	roofObject=new roof(400,250,230,20);
-	bob1 = new bob(320,575,40)
-	bob2 = new bob(360,575,40)
-	bob3 = new bob(400,575,40)
-	bob4 = new bob(440,575,40)
-	bob5 = new bob(480,575,40)
-	
-	rope1=new rope(bob1.body,roofObject.body,-80)
-	rope2=new rope(bob2.body,roofObject.body,-40)
-	rope3=new rope(bob3.body,roofObject.body,0)
-	rope4=new rope(bob4.body,roofObject.body,40)
-	rope5=new rope(bob5.body,roofObject.body,80)
-    
-   
-	Engine.run(engine);
-	
   
 }
 
 function draw() {
-  rectMode(CENTER);
-  background(230);
-  roofObject.display();
+  background(189);
 
-  rope1.display();
-  rope2.display();
-  rope3.display();
-  rope4.display();
-  rope5.display();
+  Engine.update(engine);
 
-  bob1.display();
-  bob2.display();
+  // Title
+  fill("#FFFF");
+  textAlign("center");
+  textSize(40);
+  text("EPIC ARCHERY", width / 2, 100);
+
+ 
+  playerBase.display();
+//call the display() function for the player object.
+  player.display();
+
+  computerBase.display();
+  computer.display();
   
-  bob3.display();
-  bob4.display();
-  bob5.display();
 
-  
 }
-
-
-function keyPressed() {
-	if (keyCode === UP_ARROW) {
-    //WRITE A CORRECT CODE TO APPLY A KEYPRESSED TO CHANGE THE POSITION OF BALL OBJECT TO THE LEFT WHEN UP ARROW KEY IS PRESSED
-     Matter.Body.applyForce(bob1.body,bob1.body.position,{x:-50,y:-45});
-	}
-}
-
-
