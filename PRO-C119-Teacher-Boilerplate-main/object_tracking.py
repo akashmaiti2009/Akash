@@ -1,58 +1,97 @@
 import cv2
-import time
-import math
-p1=530
-p2=300
-xs=[]
-ys=[]
+import mediapipe as mp
+from pynput.keyboard import Key, Controller
 
-video = cv2.VideoCapture("footvolleyball.mp4")
-tracker=cv2.TrackerCSRT_create()
-returned, img=video.read()
-bbox=cv2.selectROI ("Tracking", img, False)
-tracker.init(img, bbox)
+keyboard = Controller()
 
-def goal_track(img,bbox):
-    x,y,w,h=int(bbox[0]), int (bbox[1]), int (bbox[2]), int (bbox[3])
-    c1=x+int(w/2)
-    c2=y+int (h/2)
-    cv2.circle(img, (c1, c2), 2, (0,0,255),5)
-    cv2.circle(img, (int(p1), int(p2)), 2, (0,255,0),3)
-    dist=math.sqrt(((c1-p1)**2)+(c2-p2)**2)
-    if dist<=20:
-        cv2.putText(img, "Goal", (300,90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255),2)
-    xs.append(c1)
-    ys.append(c2)
-    for i in range(len(xs)-1):
-        cv2.circle(img, (xs[i],ys[i]), 2, (0,0,255), 5)    
+cap = cv2.VideoCapture(0)
+
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
+
+hands = mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5)
+
+tipIds = [4, 8, 12, 16, 20]
+
+
+# Define a function to count fingers
+def countFingers(image, hand_landmarks, handNo=0):
+
+    if hand_landmarks:
+        # Get all Landmarks of the FIRST Hand VISIBLE
+        landmarks = hand_landmarks[handNo].landmark
+
+        # Count Fingers        
+        fingers = []
+
+        for lm_index in tipIds:
+                # Get Finger Tip and Bottom y Position Value
+                finger_tip_y = landmarks[lm_index].y 
+                finger_bottom_y = landmarks[lm_index - 2].y
+
+                # Check if ANY FINGER is OPEN or CLOSED
+                if lm_index !=4:
+                    if finger_tip_y < finger_bottom_y:
+                        fingers.append(1)
+                        # print("FINGER with id ",lm_index," is Open")
+
+                    if finger_tip_y > finger_bottom_y:
+                        fingers.append(0)
+                        # print("FINGER with id ",lm_index," is Closed")
+
+        totalFingers = fingers.count(1)
+        
+        # PLAY or PAUSE a Video
+        
+        ################################
+
+             # ADD CODE HERE #
+
+        ################################
+        
+
+         # Move Video FORWARD & BACKWARDS 
          
+         ################################
 
-def drawBox(img,bbox):
-    x,y,w,h=int(bbox[0]), int (bbox [1]), int (bbox [2]), int (bbox [3])
-    cv2.rectangle(img, (x,y), ((x+w), (y+h)), (255,0,0),3,1)
-    cv2.putText(img, "Tracking", (75,98),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+             # ADD CODE HERE #
+
+        ################################ 
+        
+# Define a function to 
+def drawHandLanmarks(image, hand_landmarks):
+
+    # Darw connections between landmark points
+    if hand_landmarks:
+
+      for landmarks in hand_landmarks:
+               
+        mp_drawing.draw_landmarks(image, landmarks, mp_hands.HAND_CONNECTIONS)
+
+
 
 while True:
-    check,img = video.read()   
-    success,bbox=tracker.update(img)
-    if success:
-        drawBox(img, bbox)
-    else:
-        cv2.putText(img, "lost", (75,90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255),2)
-        
-    goal_track (img, bbox)  
-          
-    cv2.imshow("result",img)
-            
-    key = cv2.waitKey(25)
+    success, image = cap.read()
 
-    if key == 32:
-        print("Stopped!")
+    image = cv2.flip(image, 1)
+    
+    # Detect the Hands Landmarks 
+    results = hands.process(image)
+
+    # Get landmark position from the processed result
+    hand_landmarks = results.multi_hand_landmarks
+
+    # Draw Landmarks
+    drawHandLanmarks(image, hand_landmarks)
+
+    # Get Hand Fingers Position        
+    countFingers(image, hand_landmarks)
+
+    cv2.imshow("Media Controller", image)
+
+    # Quit the window on pressing Sapcebar key
+    key = cv2.waitKey(1)
+    if key == 27:
         break
 
-
-video.release()
-cv2.destroyALLwindows()
-
-
-
+cv2.destroyAllWindows()
